@@ -28,7 +28,7 @@ AI-powered Instagram carousel builder. Next.js 16 + React 19 + TypeScript + Tail
 
 ## API Routes
 
-All at localhost:3000:
+All at localhost:3000. **Só respondem a pedido feito neste computador** (`src/proxy.ts` + `src/lib/local-only.ts`): Host tem que ser `localhost`/`127.0.0.1`/`[::1]` e, se vier Origin, também local. Outro aparelho no Wi-Fi ou outro site aberto no navegador leva 403, porque o `/api/chat` dá Bash ao Claude. Abrir sempre por `http://localhost:3000`. Teste: `node --test src/lib/local-only.test.ts`.
 
 - `POST /api/chat` — Claude CLI subprocess + SSE streaming
 - `GET/POST /api/carousels` — List/create carousels
