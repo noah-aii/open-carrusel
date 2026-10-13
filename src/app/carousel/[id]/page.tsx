@@ -112,8 +112,8 @@ export default function CarouselEditorPage({ params }: PageProps) {
     const slideIndex = carousel.slides.findIndex((s) => s.id === slideId);
     setConfirmState({
       open: true,
-      title: `Delete slide ${slideIndex + 1}?`,
-      description: "This action cannot be undone.",
+      title: `Excluir o slide ${slideIndex + 1}?`,
+      description: "Essa ação não pode ser desfeita.",
       onConfirm: async () => {
         const res = await fetch(`/api/carousels/${id}/slides/${slideId}`, {
           method: "DELETE",
@@ -134,8 +134,8 @@ export default function CarouselEditorPage({ params }: PageProps) {
     if (!carousel) return;
     setConfirmState({
       open: true,
-      title: `Delete "${carousel.name}"?`,
-      description: "This will permanently delete the carousel and all its slides.",
+      title: `Excluir "${carousel.name}"?`,
+      description: "O carrossel e todos os slides serão excluídos para sempre.",
       onConfirm: async () => {
         const res = await fetch(`/api/carousels/${id}`, { method: "DELETE" });
         if (res.ok) router.push("/");
@@ -175,12 +175,12 @@ export default function CarouselEditorPage({ params }: PageProps) {
   if (notFound) {
     return (
       <div className="h-full flex flex-col items-center justify-center gap-4">
-        <p className="text-lg font-semibold">Carousel not found</p>
+        <p className="text-lg font-semibold">Carrossel não encontrado</p>
         <p className="text-sm text-muted-foreground">
-          This carousel may have been deleted.
+          Talvez este carrossel tenha sido excluído.
         </p>
         <Link href="/" className="text-sm text-accent underline">
-          Back to dashboard
+          Voltar ao início
         </Link>
       </div>
     );
@@ -229,7 +229,7 @@ export default function CarouselEditorPage({ params }: PageProps) {
         onOpenChange={(open) => setConfirmState((s) => ({ ...s, open }))}
         title={confirmState.title}
         description={confirmState.description}
-        confirmLabel="Delete"
+        confirmLabel="Excluir"
         variant="destructive"
         onConfirm={confirmState.onConfirm}
       />
@@ -264,8 +264,8 @@ export default function CarouselEditorPage({ params }: PageProps) {
               size="sm"
               onClick={() => setShowFullscreen(true)}
               className="text-muted-foreground"
-              aria-label="Fullscreen preview"
-              title="Fullscreen preview"
+              aria-label="Ver em tela cheia"
+              title="Ver em tela cheia"
             >
               <Maximize2 className="h-3.5 w-3.5" />
             </Button>
@@ -274,8 +274,8 @@ export default function CarouselEditorPage({ params }: PageProps) {
               size="sm"
               onClick={() => setShowSafeZones(!showSafeZones)}
               className={showSafeZones ? "border-accent text-accent" : "text-muted-foreground"}
-              aria-label="Toggle safe zones"
-              title="Instagram safe zones"
+              aria-label="Mostrar ou ocultar áreas seguras"
+              title="Áreas seguras do Instagram"
             >
               <Grid3X3 className="h-3.5 w-3.5" />
             </Button>
@@ -290,8 +290,8 @@ export default function CarouselEditorPage({ params }: PageProps) {
                 });
               }}
               className="text-muted-foreground"
-              aria-label="Save as template"
-              title="Save as template"
+              aria-label="Salvar como modelo"
+              title="Salvar como modelo"
             >
               <Bookmark className="h-3.5 w-3.5" />
             </Button>
@@ -300,7 +300,7 @@ export default function CarouselEditorPage({ params }: PageProps) {
               size="sm"
               onClick={handleDeleteCarousel}
               className="text-muted-foreground hover:text-destructive"
-              aria-label="Delete carousel"
+              aria-label="Excluir carrossel"
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -308,7 +308,7 @@ export default function CarouselEditorPage({ params }: PageProps) {
               onClick={() => setChatOpen(!chatOpen)}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-md border border-border hover:bg-muted"
             >
-              {chatOpen ? "Hide Chat" : "Show Chat"}
+              {chatOpen ? "Ocultar chat" : "Mostrar chat"}
             </button>
             <ExportButton
               carouselId={carousel.id}

@@ -80,7 +80,7 @@ export function SlideRenderer({
           <iframe
             sandbox=""
             srcDoc={srcDoc}
-            title="Slide preview"
+            title="Prévia do slide"
             style={{
               width: slideW,
               height: slideH,

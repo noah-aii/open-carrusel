@@ -37,7 +37,7 @@ export function CaptionPanel({ caption, hashtags }: CaptionPanelProps) {
       >
         <span className="flex items-center gap-1.5">
           <MessageSquare className="h-3 w-3" />
-          Caption & Hashtags
+          Legenda e hashtags
         </span>
         {expanded ? (
           <ChevronDown className="h-3 w-3" />
@@ -52,7 +52,7 @@ export function CaptionPanel({ caption, hashtags }: CaptionPanelProps) {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] font-medium text-muted-foreground">
-                  Caption
+                  Legenda
                 </span>
                 <Button
                   variant="ghost"
@@ -65,7 +65,7 @@ export function CaptionPanel({ caption, hashtags }: CaptionPanelProps) {
                   ) : (
                     <Copy className="h-2.5 w-2.5" />
                   )}
-                  {copiedCaption ? "Copied" : "Copy"}
+                  {copiedCaption ? "Copiado" : "Copiar"}
                 </Button>
               </div>
               <p className="text-xs text-foreground bg-muted rounded-md p-2 whitespace-pre-wrap">
@@ -94,7 +94,7 @@ export function CaptionPanel({ caption, hashtags }: CaptionPanelProps) {
                   ) : (
                     <Copy className="h-2.5 w-2.5" />
                   )}
-                  {copiedHashtags ? "Copied" : "Copy All"}
+                  {copiedHashtags ? "Copiadas" : "Copiar todas"}
                 </Button>
               </div>
               <div className="flex flex-wrap gap-1">

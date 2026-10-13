@@ -30,7 +30,7 @@ export function SafeZoneOverlay({ aspectRatio, visible }: SafeZoneOverlayProps) 
           style={{ height: `${gridCropTop}%` }}
         >
           <span className="absolute bottom-1 left-2 text-[8px] text-red-500/70 font-medium">
-            Grid crop
+            Corte na grade
           </span>
         </div>
       )}
@@ -42,7 +42,7 @@ export function SafeZoneOverlay({ aspectRatio, visible }: SafeZoneOverlayProps) 
           style={{ height: `${gridCropBottom}%` }}
         >
           <span className="absolute top-1 left-2 text-[8px] text-red-500/70 font-medium">
-            Grid crop
+            Corte na grade
           </span>
         </div>
       )}
@@ -53,7 +53,7 @@ export function SafeZoneOverlay({ aspectRatio, visible }: SafeZoneOverlayProps) 
         style={{ height: `${bottomUiPercent}%` }}
       >
         <span className="absolute top-1 right-2 text-[8px] text-blue-500/60 font-medium">
-          UI overlay
+          Interface do Instagram
         </span>
       </div>
 
@@ -68,7 +68,7 @@ export function SafeZoneOverlay({ aspectRatio, visible }: SafeZoneOverlayProps) 
         }}
       >
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[8px] text-green-500/70 font-medium bg-white/80 px-1 rounded">
-          Safe zone
+          Área segura
         </span>
       </div>
     </div>

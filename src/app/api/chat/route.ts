@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Claude CLI not found. Install from https://docs.anthropic.com/en/docs/claude-code or set CLAUDE_CLI_PATH in .env.local",
+          "Claude CLI não encontrado. Instale pelo link https://docs.anthropic.com/en/docs/claude-code ou defina CLAUDE_CLI_PATH no .env.local",
       },
       { status: 503 }
     );
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
 
   const { message, sessionId, carouselId, stylePresetId } = body;
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     !message.trim() ||
     message.length > 10000
   ) {
-    return NextResponse.json({ error: "Invalid message" }, { status: 400 });
+    return NextResponse.json({ error: "Mensagem inválida" }, { status: 400 });
   }
 
   // Build dynamic system prompt with current brand + carousel + style preset context
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         controller.enqueue(
           encoder.encode(
             `event: error\ndata: ${JSON.stringify({
-              error: "Failed to start Claude CLI",
+              error: "Não foi possível iniciar o Claude CLI",
               code: e?.code,
               path: claudePath,
               message: e?.message,
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
             controller.enqueue(
               encoder.encode(
                 `event: error\ndata: ${JSON.stringify({
-                  error: `Claude CLI exited with code ${code}`,
+                  error: `O Claude CLI encerrou com o código ${code}`,
                   exitCode: code,
                   stderr: stderrBuf || undefined,
                 })}\n\n`
