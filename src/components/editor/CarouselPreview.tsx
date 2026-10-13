@@ -71,8 +71,9 @@ export function CarouselPreview({
             html={slide.html}
             aspectRatio={aspectRatio}
             style={{ width: "100%", height: "100%" }}
-          />
-          <SafeZoneOverlay aspectRatio={aspectRatio} visible={showSafeZones} />
+          >
+            <SafeZoneOverlay aspectRatio={aspectRatio} visible={showSafeZones} />
+          </SlideRenderer>
         </div>
 
         {/* Right arrow */}
