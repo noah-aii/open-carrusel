@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Grid3X3, Bookmark, Maximize2 } from "lucide-react";
+import { Trash2, Grid3X3, Bookmark, Maximize2, ClipboardCheck, BarChart3 } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -15,6 +15,7 @@ import { ExportButton } from "@/components/editor/ExportButton";
 import { CaptionPanel } from "@/components/editor/CaptionPanel";
 import { SafeZoneOverlay } from "@/components/editor/SafeZoneOverlay";
 import { FullscreenPreview } from "@/components/editor/FullscreenPreview";
+import { ResultDialog } from "@/components/editor/ResultDialog";
 import type { Carousel, AspectRatio } from "@/types/carousel";
 
 interface PageProps {
@@ -32,6 +33,7 @@ export default function CarouselEditorPage({ params }: PageProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showSafeZones, setShowSafeZones] = useState(false);
   const [showFullscreen, setShowFullscreen] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   // Confirm dialog state
   const [confirmState, setConfirmState] = useState<{
@@ -43,6 +45,8 @@ export default function CarouselEditorPage({ params }: PageProps) {
 
   // Ref for focusing chat input when + button is clicked
   const chatInputRef = useRef<HTMLTextAreaElement | null>(null);
+  // Lets the Revisar button send the review request through the chat
+  const sendMessageRef = useRef<((message: string) => void) | null>(null);
 
   const fetchCarousel = useCallback(async () => {
     try {
@@ -172,6 +176,16 @@ export default function CarouselEditorPage({ params }: PageProps) {
     }, 100);
   }, []);
 
+  const handleReview = useCallback(() => {
+    setChatOpen(true);
+    // The chat panel mounts on open; wait a tick so its send function is registered
+    setTimeout(() => {
+      sendMessageRef.current?.(
+        "Revisar: aplique a checklist de revisão neste carrossel, corrija o que falhar e me mostre a lista final."
+      );
+    }, 100);
+  }, []);
+
   if (notFound) {
     return (
       <div className="h-full flex flex-col items-center justify-center gap-4">
@@ -223,6 +237,14 @@ export default function CarouselEditorPage({ params }: PageProps) {
         onActiveChange={setActiveSlide}
       />
 
+      <ResultDialog
+        open={showResult}
+        onOpenChange={setShowResult}
+        carouselId={carousel.id}
+        result={carousel.result}
+        onSaved={fetchCarousel}
+      />
+
       {/* Confirm dialog */}
       <ConfirmDialog
         open={confirmState.open}
@@ -246,6 +268,7 @@ export default function CarouselEditorPage({ params }: PageProps) {
               onStreamStart={handleStreamStart}
               onStreamEnd={handleStreamEnd}
               chatInputRef={chatInputRef}
+              sendMessageRef={sendMessageRef}
             />
           </div>
         )}
@@ -259,6 +282,29 @@ export default function CarouselEditorPage({ params }: PageProps) {
               onChange={handleAspectChange}
             />
             <div className="flex-1" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReview}
+              disabled={carousel.slides.length === 0 || isGenerating || !claudeAvailable}
+              className="text-muted-foreground gap-1.5"
+              aria-label="Revisar"
+              title="O assistente confere a estrutura de conversão e corrige o que falhar"
+            >
+              <ClipboardCheck className="h-3.5 w-3.5" />
+              <span className="text-xs hidden xl:inline">Revisar</span>
+            </Button>
+            <Button
+              variant={carousel.result ? "outline" : "ghost"}
+              size="sm"
+              onClick={() => setShowResult(true)}
+              className={carousel.result ? "border-accent text-accent gap-1.5" : "text-muted-foreground gap-1.5"}
+              aria-label="Resultado"
+              title="Anotar os números do post publicado"
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span className="text-xs hidden xl:inline">Resultado</span>
+            </Button>
             <Button
               variant="ghost"
               size="sm"
@@ -327,8 +373,10 @@ export default function CarouselEditorPage({ params }: PageProps) {
 
           {/* Caption panel */}
           <CaptionPanel
+            carouselId={carousel.id}
             caption={carousel.caption}
             hashtags={carousel.hashtags}
+            material={carousel.material}
           />
         </div>
       </div>

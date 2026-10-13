@@ -20,6 +20,8 @@ interface ChatPanelProps {
   onStreamStart?: () => void;
   onStreamEnd?: () => void;
   chatInputRef?: React.RefObject<HTMLTextAreaElement | null>;
+  /** Lets the editor toolbar send a message (e.g. the Revisar button). */
+  sendMessageRef?: React.RefObject<((message: string) => void) | null>;
 }
 
 export function ChatPanel({
@@ -29,6 +31,7 @@ export function ChatPanel({
   onStreamStart,
   onStreamEnd,
   chatInputRef,
+  sendMessageRef,
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -227,6 +230,14 @@ export function ChatPanel({
     },
     [isStreaming, sessionId, carouselId, onStreamStart, onStreamEnd, persistMessages]
   );
+
+  useEffect(() => {
+    if (!sendMessageRef) return;
+    sendMessageRef.current = handleSend;
+    return () => {
+      sendMessageRef.current = null;
+    };
+  }, [sendMessageRef, handleSend]);
 
   if (!claudeAvailable) {
     return (
