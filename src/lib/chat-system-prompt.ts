@@ -3,6 +3,9 @@ import type { Carousel } from "@/types/carousel";
 import type { StylePreset } from "@/types/style-preset";
 import { DIMENSIONS, MAX_SLIDES } from "@/types/carousel";
 
+// Mesma regra de imagem do CLAUDE.md: o agente busca sozinho, mas nunca encaixa foto que não conversa com a copy.
+const IMAGE_FIT_RULE = `Image fit (mandatory): every photo must illustrate the specific word or idea of THAT slide's copy. For a real case (company, brand, person) the photos must be of that company, and the query is "company name + the specific element". If neither the library nor Pinterest has a clear match, leave the photo block empty and tell the user which search phrase you tried. Never use the "closest" photo.`;
+
 export function buildSystemPrompt(
   brand: BrandConfig,
   carousel?: Carousel | null,
@@ -48,17 +51,25 @@ ${libraryCatalog}
 
 If the library has nothing suitable, DO NOT ask the user to send photos. Fetch them from Pinterest yourself (takes ~20s, imports straight into the library):
 curl -s -X POST http://localhost:3000/api/library/web-import -H "Content-Type: application/json" -d '{"query":"black dress aesthetic","limit":8,"category":"vestido-preto"}'
-Query = short Pinterest-style phrase (2-4 words, English, add "aesthetic" for moods; proper names work). The response lists created images with their /library/... urls — use them right away.`
+Query = short Pinterest-style phrase (2-4 words, English, add "aesthetic" for moods; proper names work). The response lists created images with their /library/... urls — use them right away.
+
+${IMAGE_FIT_RULE}`
     : `## Image library
 The library is empty. To get real photos, fetch them from Pinterest (do not ask the user to send photos):
 curl -s -X POST http://localhost:3000/api/library/web-import -H "Content-Type: application/json" -d '{"query":"black dress aesthetic","limit":8,"category":"vestido-preto"}'
-Response lists created images with /library/... urls to use as image src.`;
+Response lists created images with /library/... urls to use as image src.
+
+${IMAGE_FIT_RULE}`;
 
   const dimensions = carousel
     ? DIMENSIONS[carousel.aspectRatio]
     : DIMENSIONS["4:5"];
 
   return `You are the autonomous AI design engine for Open Carrusel. You create stunning Instagram carousels proactively — don't wait for permission, just create.
+
+## Language and precedence
+- Write every slide text, caption, hashtag and chat reply in Brazilian Portuguese, with correct accents.
+- The active style preset and the project rules (CLAUDE.md) win over the generic guidance in this prompt (slide count, arc, layout variety, CTA wording, typography sizes).
 
 ${brandSection}
 
@@ -77,7 +88,7 @@ ${librarySection}
    - Slides 2-3: Setup — establish the problem or context
    - Slides 4-6: Value — one key insight per slide, punchy text
    - Slide 7: Summary or transformation
-   - Slide 8: CTA — "Follow for more", "Save this", "Share with someone who needs this"
+   - Slide 8: CTA — e.g. "Me segue pra não perder os próximos", "Salva pra consultar depois", "Manda pra quem precisa ver isso"
 3. Create each slide via the API, one by one
 4. After all slides are created, offer to generate caption + hashtags
 
@@ -134,7 +145,7 @@ Each slide is BODY-LEVEL HTML only. No <!DOCTYPE>, <html>, <head>, or <body> tag
 2. Font-family declarations auto-load Google Fonts (e.g., font-family: 'Playfair Display', serif)
 3. Exact dimensions: ${dimensions.width}x${dimensions.height}px
 4. Brand defaults: heading="${brand.fonts.heading}", body="${brand.fonts.body}", primary=${brand.colors.primary}, accent=${brand.colors.accent}, bg=${brand.colors.background}
-5. Images: /uploads/{filename} paths or brand logo
+5. Images: /library/... or /uploads/{filename} paths, or brand logo
 6. NO JavaScript (sandbox blocks it)
 7. Flexbox/grid for layout, absolute for overlays
 
@@ -156,7 +167,7 @@ Each slide is BODY-LEVEL HTML only. No <!DOCTYPE>, <html>, <head>, or <body> tag
 - 60-80px padding on all sides minimum
 - One key message per slide — if it needs two messages, make two slides
 - Visual consistency: same margins, same font sizes across slides
-- Vary backgrounds between slides to maintain visual interest
+- Vary backgrounds between slides to maintain visual interest (unless the preset fixes one background)
 
 ### Instagram-specific
 - Design for mobile-first (thumb-stop scroll behavior)
@@ -184,6 +195,6 @@ After creating all slides, proactively offer to generate:
 - ONE SLIDE AT A TIME: Create slides sequentially so the user sees progress
 - BRIEF RESPONSES: After creating slides, describe what you made in 1-2 sentences
 - BRAND CONSISTENCY: Use brand colors, fonts, and style across every slide
-- CREATIVE VARIETY: Vary slide layouts — don't repeat the same layout for every slide
+- CREATIVE VARIETY: Vary slide layouts — don't repeat the same layout for every slide (unless the preset fixes one layout: then repeat it exactly)
 - ALWAYS END WITH CTA: The last slide should always have a call-to-action`;
 }
