@@ -27,6 +27,8 @@
 # app data (user-generated)
 /data/
 /public/uploads/
+/public/library/
+.claude/settings.local.json
 
 # debug
 npm-debug.log*

@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp", "archiver", "puppeteer"],
+  // Files added to public/ after the build (library photos, uploads) fall through to the file route.
+  async rewrites() {
+    return [
+      { source: "/library/:path+", destination: "/api/files/library/:path+" },
+      { source: "/uploads/:path+", destination: "/api/files/uploads/:path+" },
+    ];
+  },
   async headers() {
     return [
       {

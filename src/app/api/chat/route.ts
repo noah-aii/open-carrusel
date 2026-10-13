@@ -3,6 +3,7 @@ import { spawn } from "child_process";
 import crossSpawn from "cross-spawn";
 import { getClaudePath, isClaudeAvailable } from "@/lib/claude-path";
 import { buildSystemPrompt } from "@/lib/chat-system-prompt";
+import { buildCatalogSummary } from "@/lib/image-library";
 import { getBrand } from "@/lib/brand";
 import { getCarousel } from "@/lib/carousels";
 import { getPreset } from "@/lib/style-presets";
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
   const brand = await getBrand();
   const carousel = carouselId ? await getCarousel(carouselId) : null;
   const stylePreset = stylePresetId ? await getPreset(stylePresetId) : null;
-  const systemPrompt = buildSystemPrompt(brand, carousel, stylePreset);
+  const systemPrompt = buildSystemPrompt(brand, carousel, stylePreset, await buildCatalogSummary());
 
   const claudePath = getClaudePath();
   const abortController = new AbortController();

@@ -6,7 +6,8 @@ import { DIMENSIONS, MAX_SLIDES } from "@/types/carousel";
 export function buildSystemPrompt(
   brand: BrandConfig,
   carousel?: Carousel | null,
-  stylePreset?: StylePreset | null
+  stylePreset?: StylePreset | null,
+  libraryCatalog?: string
 ): string {
   const brandSection = brand.name
     ? `## Brand identity
@@ -37,6 +38,22 @@ ${stylePreset.designRules}
 ${stylePreset.exampleSlideHtml ? `Example slide HTML for reference:\n\`\`\`html\n${stylePreset.exampleSlideHtml.substring(0, 500)}\n\`\`\`` : ""}`
     : "";
 
+  const librarySection = libraryCatalog
+    ? `## Image library (banco de imagens)
+Real photos the user curated. BEFORE using a placeholder or asking for a photo, search the library:
+curl -s "http://localhost:3000/api/library?q=KEYWORDS&category=CATEGORY"
+Returns { images: [{ url, name, category, tags, width, height }] }. Use the "url" field directly as the image src (e.g. /library/xxx.jpg). Prefer library images; never invent image paths.
+Categories available:
+${libraryCatalog}
+
+If the library has nothing suitable, DO NOT ask the user to send photos. Fetch them from Pinterest yourself (takes ~20s, imports straight into the library):
+curl -s -X POST http://localhost:3000/api/library/web-import -H "Content-Type: application/json" -d '{"query":"black dress aesthetic","limit":8,"category":"vestido-preto"}'
+Query = short Pinterest-style phrase (2-4 words, English, add "aesthetic" for moods; proper names work). The response lists created images with their /library/... urls — use them right away.`
+    : `## Image library
+The library is empty. To get real photos, fetch them from Pinterest (do not ask the user to send photos):
+curl -s -X POST http://localhost:3000/api/library/web-import -H "Content-Type: application/json" -d '{"query":"black dress aesthetic","limit":8,"category":"vestido-preto"}'
+Response lists created images with /library/... urls to use as image src.`;
+
   const dimensions = carousel
     ? DIMENSIONS[carousel.aspectRatio]
     : DIMENSIONS["4:5"];
@@ -48,6 +65,8 @@ ${brandSection}
 ${carouselSection}
 
 ${presetSection}
+
+${librarySection}
 
 ## AUTONOMOUS MODE — How you work
 
