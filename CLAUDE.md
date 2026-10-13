@@ -38,6 +38,9 @@ All at localhost:3000. **Só respondem a pedido feito neste computador** (`src/p
 - `PUT /api/carousels/[id]/slides` — Reorder slides (body: { slideIds: [...] })
 - `POST /api/carousels/[id]/slides/[slideId]/undo` — Undo slide change
 - `POST /api/carousels/[id]/export` — Export all slides to PNG ZIP
+- `PUT /api/carousels/[id]/caption`: legenda e hashtags (recusa mais de 5 hashtags, o teto do Instagram)
+- `PUT /api/carousels/[id]/material`: material da palavra-chave `{keyword,title,html,dmText}` (cada `<section>` do html vira uma página A4) · `GET` baixa o PDF
+- `PUT /api/carousels/[id]/result`: números do post publicado `{url,likes,comments,saves?,shares?,follows?}`; os melhores e piores entram no prompt do chat (`src/lib/results.ts`)
 - `GET/PUT /api/brand` — Brand configuration
 - `GET/POST /api/templates` — Templates
 - `POST /api/upload` — Image upload (PNG/JPG/WebP only, max 10MB)
@@ -57,6 +60,10 @@ All at localhost:3000. **Só respondem a pedido feito neste computador** (`src/p
 - All data mutations go through `src/lib/data.ts` (never direct fs writes for JSON)
 - iframe slides always use `sandbox=""` attribute (no JavaScript execution)
 - The Claude subprocess gets `--allowedTools Bash WebFetch` and uses curl to call local API routes
+
+## Estrutura de conversão (PRD `_docs/prds/0001-conversao-carrossel.md`)
+
+O prompt do chat (`src/lib/chat-system-prompt.ts`) aplica a estrutura medida no benchmark de 13/10/2026: capa sem jargão do nicho, slide 2 com o número mais forte, virada explícita, nicho só depois da virada, "Me segue" no penúltimo, palavra-chave = nome do caso entregando o PDF do material. Referência de outro perfil vira só estrutura, nunca cópia. O botão **Revisar** do editor roda a checklist e corrige; o botão **Resultado** guarda os números do post publicado. Testes: `node --test src/lib/*.test.ts`.
 
 ## Brand identity (ativa desde 19/09/2026)
 
