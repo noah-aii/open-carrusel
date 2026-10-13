@@ -5,7 +5,8 @@ import { getClaudePath, isClaudeAvailable } from "@/lib/claude-path";
 import { buildSystemPrompt } from "@/lib/chat-system-prompt";
 import { buildCatalogSummary } from "@/lib/image-library";
 import { getBrand } from "@/lib/brand";
-import { getCarousel } from "@/lib/carousels";
+import { getCarousel, listCarousels } from "@/lib/carousels";
+import { summarizeResults } from "@/lib/results";
 import { getPreset } from "@/lib/style-presets";
 
 export const runtime = "nodejs";
@@ -50,7 +51,13 @@ export async function POST(request: NextRequest) {
   const brand = await getBrand();
   const carousel = carouselId ? await getCarousel(carouselId) : null;
   const stylePreset = stylePresetId ? await getPreset(stylePresetId) : null;
-  const systemPrompt = buildSystemPrompt(brand, carousel, stylePreset, await buildCatalogSummary());
+  const systemPrompt = buildSystemPrompt(
+    brand,
+    carousel,
+    stylePreset,
+    await buildCatalogSummary(),
+    summarizeResults(await listCarousels())
+  );
 
   const claudePath = getClaudePath();
   const abortController = new AbortController();

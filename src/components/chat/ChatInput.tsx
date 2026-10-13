@@ -13,6 +13,9 @@ interface ChatInputProps {
 }
 
 const SUGGESTIONS = [
+  "Crie um carrossel de caso sobre a empresa...",
+  "Crie um post de opinião em foto única sobre...",
+  "Use esta referência só como estrutura, com um caso novo: ...",
   "Crie um carrossel de 5 slides sobre...",
   "Deixe o design mais minimalista",
   "Mude a cor de destaque para azul",
